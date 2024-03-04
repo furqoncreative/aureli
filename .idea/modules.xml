@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/aurel.iml" filepath="$PROJECT_DIR$/.idea/aurel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../aureli/.idea/aurel.iml" filepath="$PROJECT_DIR$/../aureli/.idea/aurel.iml" />
     </modules>
   </component>
 </project>
