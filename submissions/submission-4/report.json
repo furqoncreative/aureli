@@ -1,0 +1,11 @@
+{
+    "checklists_completed": [
+        "package_json_exists",
+        "main_js_exists",
+        "main_js_have_student_id_comment",
+        "root_showing_html",
+        "serve_in_port_5000",
+        "html_contain_h_1_element_with_student_id"
+    ],
+    "message": "Selamat <b>Ujang!!</b> kamu telah lolos submission ini."
+}
