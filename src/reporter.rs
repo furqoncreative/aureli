@@ -9,18 +9,20 @@ pub fn generate_report(
     checklists: Checklists,
     auto_review_config: AutoReviewConfig,
 ) {
-    let is_passed = if checklists.completed_checklists_key.len() == CHECKLIST_KEYS_COUNT {
-        true
-    } else {
-        false
-    };
+    let is_submission_approved = is_submission_approved(&checklists);
+
+    let review_message = generate_review_message(
+        is_submission_approved,
+        auto_review_config.submitter_name,
+        &checklists.get_rejected_checklist_messages(),
+    );
 
     let report = Report {
         submission_id: auto_review_config.id,
-        rating: if is_passed { 5 } else { 0 },
+        rating: if is_submission_approved { 5 } else { 0 },
         checklist_keys: checklists.completed_checklists_key,
-        message: "".to_string(),
-        is_passed,
+        message: review_message,
+        is_passed: is_submission_approved,
     };
 
     let json_data = serde_json::to_string(&report).unwrap();
@@ -35,4 +37,29 @@ pub fn generate_report(
     }
 
     write(report_path.join("report.json"), json_data).expect("Unable to write file");
+}
+
+fn generate_review_message(
+    is_submission_approved: bool,
+    username: String,
+    rejected_checklist_messages: &Vec<String>,
+) -> String {
+    if is_submission_approved {
+        return format!(
+            "Selamat <b>{}</b>! Kamu telah memenuhi semua kriteria dan lulus dari submission ini",
+            username
+        );
+    }
+
+    format!(
+        "Mohon maaf <b>{}</b>! Kamu belum memenuhi semua kriteria dan tidak lulus dari submission ini. \
+    Berikut adalah kriteria yang belum terpenuhi: \n <ul>{}</ul> \
+    Silakan diperbaiki, ya. Semangat!",
+        username,
+        rejected_checklist_messages.join("\n")
+    )
+}
+
+fn is_submission_approved(checklists: &Checklists) -> bool {
+    checklists.completed_checklists_key.len() == CHECKLIST_KEYS_COUNT
 }
