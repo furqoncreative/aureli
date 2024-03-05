@@ -59,12 +59,6 @@ pub async fn grade_submission(submission_path: &Path, student_id: u32) -> Checkl
         let student_id_result =
             is_main_js_have_student_id_comment(main_js_file.clone().unwrap(), student_id);
         checklists_map.insert(MAIN_JS_HAVE_STUDENT_ID_COMMENT, student_id_result.checklist);
-    } else {
-        checklists_map
-            .entry(MAIN_JS_EXISTS)
-            .and_modify(|checklist| {
-                checklist.message = "main.js not found".to_string();
-            });
     }
 
     checklists.completed_checklists_key = checklists.get_completed_checklist_keys();
@@ -77,7 +71,9 @@ fn get_package_json(submission_path: &Path) -> ChecklistResult<PathBuf> {
     let package_json = find_file(submission_path, "package.json");
 
     if package_json.is_none() {
-        checklist.message = "package.json not found".to_string();
+        checklist.message =
+            "Kami tidak bisa menemukan file package.json pada submission yang kamu kirimkan"
+                .to_string();
         return ChecklistResult {
             checklist,
             extra_data: None,
@@ -96,7 +92,8 @@ fn get_main_js(submission_path: &Path) -> ChecklistResult<PathBuf> {
     let main_js = find_file(submission_path, "main.js");
 
     if main_js.is_none() {
-        checklist.message = "main.js not found".to_string();
+        checklist.message =
+            "Kami tidak bisa menemukan file main.js pada submission yang kamu kirimkan".to_string();
         return ChecklistResult {
             checklist,
             extra_data: None,
@@ -126,7 +123,8 @@ fn is_main_js_have_student_id_comment(main_js: PathBuf, student_id: u32) -> Chec
             }
         }
         false => {
-            checklist.message = "student id not found".to_string();
+            checklist.message =
+                "Pada file main.js tidak ditemukan komentar dengan ID Anda.".to_string();
             ChecklistResult {
                 checklist,
                 extra_data: None,
@@ -153,7 +151,9 @@ fn is_server_up() -> ChecklistResult<bool> {
         }
         Err(err) => {
             eprintln!("Failed to connect to {}: {}", addr, err);
-            checklist.message = "Port 5000 is not running".to_string();
+            checklist.message =
+                "Port 5000 tidak terdeteksi berjalan. Pastikan port yang digunakan adalah 5000."
+                    .to_string();
             ChecklistResult {
                 checklist,
                 extra_data: None,
@@ -176,8 +176,11 @@ async fn get_html_content() -> ChecklistResult<String> {
                 .expect("Failed to load Content-Type");
 
             if !content_type.contains("html") {
-                checklist.message =
-                    format!("Response is not HTML, but {}", content_type).to_string();
+                checklist.message = format!(
+                    "Content root tidak menampilkan HTML, melainkan {}",
+                    content_type
+                )
+                .to_string();
                 return ChecklistResult {
                     checklist,
                     extra_data: None,
@@ -191,7 +194,7 @@ async fn get_html_content() -> ChecklistResult<String> {
             }
         }
         Err(err) => {
-            checklist.message = format!("Failed to get HTML content: {}", err);
+            checklist.message = format!("Gagal mendapatkan HTML dengan error: {}", err);
             ChecklistResult {
                 checklist,
                 extra_data: None,
@@ -214,7 +217,7 @@ fn check_h1_element_with_student_id(html_content: &str, student_id: u32) -> Chec
             }
         }
         false => {
-            checklist.message = "h1 element with student id not found".to_string();
+            checklist.message = "ID Anda tidak ditemukan pada elemen H1. Pastikan main.js menampilkan element H1 dengan isi ID anda.".to_string();
             ChecklistResult {
                 checklist,
                 extra_data: None,

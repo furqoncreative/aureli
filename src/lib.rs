@@ -44,6 +44,15 @@ pub mod entities {
         pub message: String,
     }
 
+    impl Checklist {
+        fn new(message: String) -> Self {
+            Self {
+                status: false,
+                message,
+            }
+        }
+    }
+
     pub struct Checklists<'a> {
         pub checklists_map: HashMap<&'a str, Checklist>,
         pub completed_checklists_key: Vec<String>,
@@ -55,13 +64,18 @@ pub mod entities {
                 checklists_map: HashMap::from([
                     (PACKAGE_JSON_EXISTS, Checklist::default()),
                     (MAIN_JS_EXISTS, Checklist::default()),
-                    (MAIN_JS_HAVE_STUDENT_ID_COMMENT, Checklist::default()),
-                    (ROOT_SHOWING_HTML, Checklist::default()),
-                    (SERVE_IN_PORT_5000, Checklist::default()),
-                    (
-                        HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID,
-                        Checklist::default(),
-                    ),
+                    (MAIN_JS_HAVE_STUDENT_ID_COMMENT, Checklist::new(
+                        String::from("main.js tidak bisa ditemukan sehingga kriteria 'Komentar ID Anda pada main.js' tidak bisa diperiksa.")
+                    )),
+                    (ROOT_SHOWING_HTML, Checklist::new(
+                        String::from("package.json tidak bisa ditemukan sehingga project tidak bisa dijalankan dan kriteria 'Root menampilkan HTML' tidak bisa diperiksa.")
+                    )),
+                    (SERVE_IN_PORT_5000, Checklist::new(
+                        String::from("package.json tidak bisa ditemukan sehingga project tidak bisa dijalankan dan kriteria 'Aplikasi Berjalan di port 5000' tidak bisa diperiksa.")
+                    )),
+                    (HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, Checklist::new(
+                        String::from("Project tidak bisa dijalankan dan kriteria 'Menampilkan ID pada element H1' tidak bisa diperiksa.")
+                    )),
                 ]),
                 completed_checklists_key: vec![],
             }
