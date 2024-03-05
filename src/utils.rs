@@ -2,22 +2,18 @@ use std::fs::read_to_string;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use glob::glob;
 use log::error;
+use walkdir::WalkDir;
 
 use aureli::entities::AutoReviewConfig;
 
 pub fn find_file(submission_path: &Path, file: &str) -> Option<PathBuf> {
-    let pattern = submission_path.join("**").join(file);
-    for entry in glob(pattern.to_str().unwrap()).unwrap() {
-        return match entry {
-            Ok(path) => Some(path),
-            Err(err) => {
-                panic!("Error finding file: {}", err);
-            }
-        };
-    }
-    None
+    WalkDir::new(submission_path)
+        .into_iter()
+        .filter_entry(|entry| entry.file_name().to_str() != Some("node_modules"))
+        .filter_map(|entry| entry.ok())
+        .find(|entry| entry.file_name() == file)
+        .map(|entry| entry.path().to_owned())
 }
 
 pub fn read_file(path: &Path) -> Option<String> {
