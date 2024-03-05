@@ -38,18 +38,10 @@ pub mod entities {
         pub is_passed: bool,
     }
 
+    #[derive(Default)]
     pub struct Checklist {
         pub status: bool,
         pub message: String,
-    }
-
-    impl Checklist {
-        pub fn new() -> Checklist {
-            Checklist {
-                status: false,
-                message: String::new(),
-            }
-        }
     }
 
     pub struct Checklists<'a> {
@@ -61,12 +53,15 @@ pub mod entities {
         pub fn initialize() -> Checklists<'static> {
             Checklists {
                 checklists_map: HashMap::from([
-                    (PACKAGE_JSON_EXISTS, Checklist::new()),
-                    (MAIN_JS_EXISTS, Checklist::new()),
-                    (MAIN_JS_HAVE_STUDENT_ID_COMMENT, Checklist::new()),
-                    (ROOT_SHOWING_HTML, Checklist::new()),
-                    (SERVE_IN_PORT_5000, Checklist::new()),
-                    (HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, Checklist::new()),
+                    (PACKAGE_JSON_EXISTS, Checklist::default()),
+                    (MAIN_JS_EXISTS, Checklist::default()),
+                    (MAIN_JS_HAVE_STUDENT_ID_COMMENT, Checklist::default()),
+                    (ROOT_SHOWING_HTML, Checklist::default()),
+                    (SERVE_IN_PORT_5000, Checklist::default()),
+                    (
+                        HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID,
+                        Checklist::default(),
+                    ),
                 ]),
                 completed_checklists_key: vec![],
             }

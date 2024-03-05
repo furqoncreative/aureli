@@ -73,7 +73,7 @@ pub async fn grade_submission(submission_path: &PathBuf, student_id: u32) -> Che
 }
 
 fn get_package_json(submission_path: &Path) -> ChecklistResult<PathBuf> {
-    let mut checklist = Checklist::new();
+    let mut checklist = Checklist::default();
     let package_json = find_file(submission_path, "package.json");
 
     if package_json.is_none() {
@@ -92,7 +92,7 @@ fn get_package_json(submission_path: &Path) -> ChecklistResult<PathBuf> {
 }
 
 fn get_main_js(submission_path: &Path) -> ChecklistResult<PathBuf> {
-    let mut checklist = Checklist::new();
+    let mut checklist = Checklist::default();
     let main_js = find_file(submission_path, "main.js");
 
     if main_js.is_none() {
@@ -111,7 +111,7 @@ fn get_main_js(submission_path: &Path) -> ChecklistResult<PathBuf> {
 }
 
 fn is_main_js_have_student_id_comment(main_js: PathBuf, student_id: u32) -> ChecklistResult<bool> {
-    let mut checklist = Checklist::new();
+    let mut checklist = Checklist::default();
 
     let main_js_content = read_file(main_js.as_path());
     let pattern = format!("(?://.*?|/\\*.*?\\*/).*?{}.*?", student_id);
@@ -136,7 +136,7 @@ fn is_main_js_have_student_id_comment(main_js: PathBuf, student_id: u32) -> Chec
 }
 
 fn is_server_up() -> ChecklistResult<bool> {
-    let mut checklist = Checklist::new();
+    let mut checklist = Checklist::default();
     sleep(Duration::from_secs(2));
 
     let addr = "127.0.0.1:5000"
@@ -163,7 +163,7 @@ fn is_server_up() -> ChecklistResult<bool> {
 }
 
 async fn get_html_content() -> ChecklistResult<String> {
-    let mut checklist = Checklist::new();
+    let mut checklist = Checklist::default();
     let response = reqwest::get("http://localhost:5000").await;
 
     return match response {
@@ -201,7 +201,7 @@ async fn get_html_content() -> ChecklistResult<String> {
 }
 
 fn check_h1_element_with_student_id(html_content: &str, student_id: u32) -> ChecklistResult<bool> {
-    let mut checklist = Checklist::new();
+    let mut checklist = Checklist::default();
     let pattern = format!("<h1>{}</h1>", student_id);
     let regex = Regex::new(&pattern).expect("Invalid regex pattern");
 
