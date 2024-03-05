@@ -75,13 +75,16 @@ pub mod entities {
         pub fn get_completed_checklist_keys(&self) -> Vec<String> {
             self.checklists_map
                 .iter()
-                .filter_map(|(key, checklist)| {
-                    if checklist.status {
-                        Some(key.to_string())
-                    } else {
-                        None
-                    }
-                })
+                .filter(|(_, checklist)| checklist.status)
+                .map(|(key, _)| key.to_string())
+                .collect()
+        }
+
+        pub fn get_rejected_checklist_messages(&self) -> Vec<String> {
+            self.checklists_map
+                .values()
+                .filter(|checklist| !checklist.status)
+                .map(|checklist| format!("<li>{}</li>", checklist.message))
                 .collect()
         }
     }
