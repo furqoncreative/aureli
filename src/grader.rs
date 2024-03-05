@@ -13,7 +13,7 @@ use aureli::entities::{Checklist, ChecklistResult, Checklists};
 
 use crate::utils::{find_file, read_file, run_main_js, run_npm_install, stop_server};
 
-pub async fn grade_submission(submission_path: &PathBuf, student_id: u32) -> Checklists {
+pub async fn grade_submission(submission_path: &Path, student_id: u32) -> Checklists {
     let mut checklists = Checklists::initialize();
     let checklists_map = &mut checklists.checklists_map;
 

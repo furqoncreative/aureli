@@ -42,7 +42,7 @@ pub fn generate_report(
 fn generate_review_message(
     is_submission_approved: bool,
     username: String,
-    rejected_checklist_messages: &Vec<String>,
+    rejected_checklist_messages: &[String],
 ) -> String {
     if is_submission_approved {
         return format!(
