@@ -110,8 +110,8 @@ pub mod entities {
 }
 
 pub mod cli {
-    use std::path::PathBuf;
     use clap::{value_parser, Arg, Command};
+    use std::path::PathBuf;
 
     pub fn build() -> Command {
         Command::new("aureli")
