@@ -1,6 +1,6 @@
 # Aureli
 
-Aureli (Auto Review CLI) - A Simple CLI App for Auto Review Submission.
+Aureli (Auto Review CLI) - A Simple Auto Review Submission CLI App.
 
 ## Requirement 
 - Linux
