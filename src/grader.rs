@@ -67,66 +67,58 @@ pub async fn grade_submission(submission_path: &Path, student_id: u32) -> Checkl
 }
 
 fn get_package_json(submission_path: &Path) -> ChecklistResult<PathBuf> {
-    let mut checklist = Checklist::default();
     let package_json = find_file(submission_path, "package.json");
 
     if package_json.is_none() {
-        checklist.message =
-            "Kami tidak bisa menemukan file package.json pada submission yang kamu kirimkan"
-                .to_string();
         return ChecklistResult {
-            checklist,
+            checklist: Checklist::reject(
+                String::from("Kami tidak bisa menemukan file package.json pada submission yang kamu kirimkan")
+            ),
             extra_data: None,
         };
     }
 
-    checklist.status = true;
     ChecklistResult {
-        checklist,
+        checklist: Checklist::approve(),
         extra_data: Some(package_json.unwrap()),
     }
 }
 
 fn get_main_js(submission_path: &Path) -> ChecklistResult<PathBuf> {
-    let mut checklist = Checklist::default();
     let main_js = find_file(submission_path, "main.js");
 
     if main_js.is_none() {
-        checklist.message =
-            "Kami tidak bisa menemukan file main.js pada submission yang kamu kirimkan".to_string();
         return ChecklistResult {
-            checklist,
+            checklist: Checklist::reject(
+                String::from("Kami tidak bisa menemukan file main.js pada submission yang kamu kirimkan")
+            ),
             extra_data: None,
         };
     }
 
-    checklist.status = true;
     ChecklistResult {
-        checklist,
+        checklist: Checklist::approve(),
         extra_data: main_js,
     }
 }
 
 fn is_main_js_have_student_id_comment(main_js: PathBuf, student_id: u32) -> ChecklistResult<bool> {
-    let mut checklist = Checklist::default();
-
     let main_js_content = read_file(main_js.as_path());
     let pattern = format!("(?://.*?|/\\*.*?\\*/).*?{}.*?", student_id);
     let regex = Regex::new(&pattern).expect("Invalid regex pattern");
 
     return match regex.is_match(main_js_content.unwrap().as_str()) {
-        true => {
-            checklist.status = true;
+        false => {
             ChecklistResult {
-                checklist,
+                checklist: Checklist::reject(
+                    String::from("File main.js tidak mengandung komentar yang mengandung ID Anda")
+                ),
                 extra_data: None,
             }
         }
-        false => {
-            checklist.message =
-                "Pada file main.js tidak ditemukan komentar dengan ID Anda.".to_string();
+        true => {
             ChecklistResult {
-                checklist,
+                checklist: Checklist::approve(),
                 extra_data: None,
             }
         }
@@ -134,7 +126,6 @@ fn is_main_js_have_student_id_comment(main_js: PathBuf, student_id: u32) -> Chec
 }
 
 fn is_server_up() -> ChecklistResult<bool> {
-    let mut checklist = Checklist::default();
     sleep(Duration::from_secs(2));
 
     let addr = "127.0.0.1:5000"
@@ -143,19 +134,16 @@ fn is_server_up() -> ChecklistResult<bool> {
 
     match TcpStream::connect_timeout(&addr, Duration::from_secs(3)) {
         Ok(_) => {
-            checklist.status = true;
             ChecklistResult {
-                checklist,
+                checklist: Checklist::approve(),
                 extra_data: Some(true),
             }
         }
-        Err(err) => {
-            eprintln!("Failed to connect to {}: {}", addr, err);
-            checklist.message =
-                "Port 5000 tidak terdeteksi berjalan. Pastikan port yang digunakan adalah 5000."
-                    .to_string();
+        Err(_) => {
             ChecklistResult {
-                checklist,
+                checklist: Checklist::reject(
+                    String::from("Server tidak dapat dijalankan pada port 5000")
+                ),
                 extra_data: None,
             }
         }
@@ -163,7 +151,6 @@ fn is_server_up() -> ChecklistResult<bool> {
 }
 
 async fn get_html_content() -> ChecklistResult<String> {
-    let mut checklist = Checklist::default();
     let response = reqwest::get("http://localhost:5000").await;
 
     return match response {
@@ -176,27 +163,27 @@ async fn get_html_content() -> ChecklistResult<String> {
                 .expect("Failed to load Content-Type");
 
             if !content_type.contains("html") {
-                checklist.message = format!(
-                    "Content root tidak menampilkan HTML, melainkan {}",
-                    content_type
-                )
-                .to_string();
                 return ChecklistResult {
-                    checklist,
+                    checklist: Checklist::reject(
+                        format!(
+                            "Content root tidak menampilkan HTML, melainkan {}",
+                            content_type
+                        )
+                    ),
                     extra_data: None,
                 };
             }
 
-            checklist.status = true;
             ChecklistResult {
-                checklist,
+                checklist: Checklist::approve(),
                 extra_data: Some(response.text().await.unwrap()),
             }
         }
         Err(err) => {
-            checklist.message = format!("Gagal mendapatkan HTML dengan error: {}", err);
             ChecklistResult {
-                checklist,
+                checklist: Checklist::reject(
+                    format!("Gagal mendapatkan HTML dengan error: {}", err)
+                ),
                 extra_data: None,
             }
         }
@@ -204,22 +191,21 @@ async fn get_html_content() -> ChecklistResult<String> {
 }
 
 fn check_h1_element_with_student_id(html_content: &str, student_id: u32) -> ChecklistResult<bool> {
-    let mut checklist = Checklist::default();
     let pattern = format!("<h1>{}</h1>", student_id);
     let regex = Regex::new(&pattern).expect("Invalid regex pattern");
 
     match regex.is_match(html_content) {
-        true => {
-            checklist.status = true;
+        false => {
             ChecklistResult {
-                checklist,
+                checklist: Checklist::reject(
+                    String::from("HTML tidak menampilkan H1 element dengan ID Anda")
+                ),
                 extra_data: None,
             }
         }
-        false => {
-            checklist.message = "ID Anda tidak ditemukan pada elemen H1. Pastikan main.js menampilkan element H1 dengan isi ID anda.".to_string();
+        true => {
             ChecklistResult {
-                checklist,
+                checklist: Checklist::approve(),
                 extra_data: None,
             }
         }

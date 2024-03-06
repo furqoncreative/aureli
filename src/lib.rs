@@ -11,14 +11,12 @@ pub mod checklist_key {
 }
 
 pub mod entities {
-    use std::collections::HashMap;
-
-    use serde::{Deserialize, Serialize};
-
     use crate::checklist_key::{
         HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, MAIN_JS_EXISTS, MAIN_JS_HAVE_STUDENT_ID_COMMENT,
         PACKAGE_JSON_EXISTS, ROOT_SHOWING_HTML, SERVE_IN_PORT_5000,
     };
+    use serde::{Deserialize, Serialize};
+    use std::collections::HashMap;
 
     #[derive(Serialize, Deserialize)]
     pub struct AutoReviewConfig {
@@ -45,7 +43,14 @@ pub mod entities {
     }
 
     impl Checklist {
-        fn new(message: String) -> Self {
+        pub fn approve() -> Self {
+            Self {
+                status: true,
+                message: String::from(""),
+            }
+        }
+
+        pub fn reject(message: String) -> Self {
             Self {
                 status: false,
                 message,
@@ -64,16 +69,16 @@ pub mod entities {
                 checklists_map: HashMap::from([
                     (PACKAGE_JSON_EXISTS, Checklist::default()),
                     (MAIN_JS_EXISTS, Checklist::default()),
-                    (MAIN_JS_HAVE_STUDENT_ID_COMMENT, Checklist::new(
+                    (MAIN_JS_HAVE_STUDENT_ID_COMMENT, Checklist::reject(
                         String::from("main.js tidak bisa ditemukan sehingga kriteria 'Komentar ID Anda pada main.js' tidak bisa diperiksa.")
                     )),
-                    (ROOT_SHOWING_HTML, Checklist::new(
+                    (ROOT_SHOWING_HTML, Checklist::reject(
                         String::from("package.json tidak bisa ditemukan sehingga project tidak bisa dijalankan dan kriteria 'Root menampilkan HTML' tidak bisa diperiksa.")
                     )),
-                    (SERVE_IN_PORT_5000, Checklist::new(
+                    (SERVE_IN_PORT_5000, Checklist::reject(
                         String::from("package.json tidak bisa ditemukan sehingga project tidak bisa dijalankan dan kriteria 'Aplikasi Berjalan di port 5000' tidak bisa diperiksa.")
                     )),
-                    (HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, Checklist::new(
+                    (HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, Checklist::reject(
                         String::from("Project tidak bisa dijalankan dan kriteria 'Menampilkan ID pada element H1' tidak bisa diperiksa.")
                     )),
                 ]),
@@ -106,7 +111,6 @@ pub mod entities {
 
 pub mod cli {
     use std::path::PathBuf;
-
     use clap::{value_parser, Arg, Command};
 
     pub fn build() -> Command {
