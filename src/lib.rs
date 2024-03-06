@@ -70,16 +70,16 @@ pub mod entities {
                     (PACKAGE_JSON_EXISTS, Checklist::default()),
                     (MAIN_JS_EXISTS, Checklist::default()),
                     (MAIN_JS_HAVE_STUDENT_ID_COMMENT, Checklist::reject(
-                        String::from("main.js tidak bisa ditemukan sehingga kriteria 'Komentar ID Anda pada main.js' tidak bisa diperiksa.")
+                        String::from("Kriteria 'Komentar ID Anda pada main.js' tidak bisa diperiksa karena file main.js tidak ditemukan.")
                     )),
                     (ROOT_SHOWING_HTML, Checklist::reject(
-                        String::from("package.json tidak bisa ditemukan sehingga project tidak bisa dijalankan dan kriteria 'Root menampilkan HTML' tidak bisa diperiksa.")
+                        String::from("Kriteria 'Root menampilkan HTML' tidak bisa diperiksa karena package.json tidak bisa jalankan.")
                     )),
                     (SERVE_IN_PORT_5000, Checklist::reject(
-                        String::from("package.json tidak bisa ditemukan sehingga project tidak bisa dijalankan dan kriteria 'Aplikasi Berjalan di port 5000' tidak bisa diperiksa.")
+                        String::from("Kriteria 'Aplikasi Berjalan di port 5000' tidak bisa diperiksa karena package.json tidak bisa jalankan.")
                     )),
                     (HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, Checklist::reject(
-                        String::from("Project tidak bisa dijalankan dan kriteria 'Menampilkan ID pada element H1' tidak bisa diperiksa.")
+                        String::from("Kriteria 'Menampilkan ID pada element H1' tidak bisa diperiksa karena project tiak bisa dijalankan.")
                     )),
                 ]),
                 completed_checklists_key: vec![],
