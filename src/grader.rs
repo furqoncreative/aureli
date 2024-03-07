@@ -5,10 +5,7 @@ use std::time::Duration;
 
 use regex::Regex;
 
-use aureli::checklist_key::{
-    HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, MAIN_JS_EXISTS, MAIN_JS_HAVE_STUDENT_ID_COMMENT,
-    PACKAGE_JSON_EXISTS, ROOT_SHOWING_HTML, SERVE_IN_PORT_5000,
-};
+use aureli::checklist_key::*;
 use aureli::entities::{Checklist, ChecklistResult, Checklists};
 
 use crate::utils::{find_file, read_file, run_main_js, run_npm_install, stop_server};
@@ -80,7 +77,7 @@ fn get_package_json(submission_path: &Path) -> ChecklistResult<PathBuf> {
 
     ChecklistResult {
         checklist: Checklist::approve(),
-        extra_data: Some(package_json.unwrap()),
+        extra_data: package_json,
     }
 }
 

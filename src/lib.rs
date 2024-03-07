@@ -11,10 +11,7 @@ pub mod checklist_key {
 }
 
 pub mod entities {
-    use crate::checklist_key::{
-        HTML_CONTAIN_H_1_ELEMENT_WITH_STUDENT_ID, MAIN_JS_EXISTS, MAIN_JS_HAVE_STUDENT_ID_COMMENT,
-        PACKAGE_JSON_EXISTS, ROOT_SHOWING_HTML, SERVE_IN_PORT_5000,
-    };
+    use crate::checklist_key::*;
     use serde::{Deserialize, Serialize};
     use std::collections::HashMap;
 
@@ -110,8 +107,9 @@ pub mod entities {
 }
 
 pub mod cli {
-    use clap::{value_parser, Arg, Command};
     use std::path::PathBuf;
+
+    use clap::{value_parser, Arg, Command};
 
     pub fn build() -> Command {
         Command::new("aureli")

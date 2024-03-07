@@ -9,7 +9,7 @@ pub fn generate_report(
     checklists: Checklists,
     auto_review_config: AutoReviewConfig,
 ) {
-    let is_submission_approved = is_submission_approved(&checklists);
+    let is_submission_approved = is_submission_approved(checklists.completed_checklists_key.len());
 
     let review_message = generate_review_message(
         is_submission_approved,
@@ -60,6 +60,6 @@ fn generate_review_message(
     )
 }
 
-fn is_submission_approved(checklists: &Checklists) -> bool {
-    checklists.completed_checklists_key.len() == CHECKLIST_KEYS_COUNT
+fn is_submission_approved(completed_checklists_key_count: usize) -> bool {
+    completed_checklists_key_count == CHECKLIST_KEYS_COUNT
 }
